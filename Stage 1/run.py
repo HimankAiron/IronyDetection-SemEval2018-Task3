@@ -17,7 +17,6 @@ from sentencesimilarity import *
 from structuralfeatures import *
 from intensifiers import intensi_scorer
 from celeb import *
-from metaphors import *
 
 # ----------MAIN RUN FUNCTION--------#
 
