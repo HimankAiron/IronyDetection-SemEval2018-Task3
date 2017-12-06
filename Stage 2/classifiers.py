@@ -199,3 +199,9 @@ def bowpca(X):
 	pca = PCA(n_components=30)
 	pca.fit(X)
 	return X
+
+
+def featurepca(X):
+	pca = PCA(n_components=20)
+	pca.fit(X)
+	return X
