@@ -4,7 +4,7 @@
 # AUTHOR: Zhenduo Wang
 # The main function calls all the feature measuring function to get the measurements
 #		and then concatenate the measurements into feature matrix. Then it calls
-#       the pca function to do a dimensional redunction. Then it calls the 
+#       the pca function to do a dimensional redunction. Then it calls the
 #       classifiers function to get the prediction label.
 
 import numpy
@@ -20,13 +20,25 @@ from intensifiers import intensi_scorer
 from celeb import *
 from sklearn.feature_extraction.text import CountVectorizer
 
+# the number of class in classification
+# 2 for taskA, 4 for taskB
+class_num = 4
+
 # ----------MAIN RUN FUNCTION--------#
+if class_num == 2:
+    with open('SemEval2018-T4-train-taskA.txt', encoding='utf-8') as f:
+        tweet_list = [line.split('\t')[2] for line in f]
 
-with open('SemEval2018-T4-train-taskA.txt', encoding='utf-8') as f:
-    tweet_list = [line.split('\t')[2] for line in f]
+    with open('SemEval2018-T4-train-taskA.txt', encoding='utf-8') as f:
+        score_list = [line.split('\t')[1] for line in f]
 
-with open('SemEval2018-T4-train-taskA.txt', encoding='utf-8') as f:
-    score_list = [line.split('\t')[1] for line in f]
+if class_num == 4:
+
+    with open('SemEval2018-T4-train-taskB.txt', encoding='utf-8') as f:
+        tweet_list = [line.split('\t')[2] for line in f]
+
+    with open('SemEval2018-T4-train-taskB.txt', encoding='utf-8') as f:
+        score_list = [line.split('\t')[1] for line in f]
 
 # Removes label from from the tweet list and the score list
 tweet_list = tweet_list[1:]
@@ -120,10 +132,10 @@ y = numpy.array(cleaned_score_list)
 
 output = open("output_Lovelace.txt", 'w')
 
-LogisticRegressionClf(X, y, output)
-SVMClf(X, y, output)
-RandomForestClf(X, y, output)
-VotedClf(X,y,output)
+LogisticRegressionClf(X, y, output,class_num)
+SVMClf(X, y, output,class_num)
+RandomForestClf(X, y, output,class_num)
+VotedClf(X,y,output,class_num)
 
 
 output.close()
