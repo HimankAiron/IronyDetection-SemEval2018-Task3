@@ -10,7 +10,7 @@ from nltk import word_tokenize, pos_tag
 def celebrity_scorer(tweets):
 
 
-    with open('celebrity_list', 'r') as file:
+    with open('celebrity_list.txt', 'r') as file:
         celebrity_list = file.read()
         celebrity_list = celebrity_list.split('\n')
 
