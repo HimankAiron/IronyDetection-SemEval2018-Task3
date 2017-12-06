@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # Classifiers 
 # AUTHOR:Zhenduo Wang
-# This script implements 3 classifiers(Logistic Regression,SVM and Random Forest)
-# All of them takes the feature matrix and produce the prediction label
+# This script implements 5 classifiers(Logistic Regression,SVM, Random Forest, Naive Bayes and a voting system of classifiers)
+# All of them takes the feature matrix and produce the prediction label.
 # We keep tracking of these classifiers with different features in order to get the best results.
-
+# This script also implements pca function.
 
 import numpy
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
@@ -14,41 +14,18 @@ from sklearn.model_selection import cross_val_score
 from sklearn.svm import SVC
 from sklearn.decomposition import PCA
 from evaluate import *
+from sklearn.naive_bayes import GaussianNB
 
 '''
 ---------- Support Vector Machine Classifier ------------
-This function uses SVM classifier for the binary classification problem based on the feature we select. 
+This function uses SVM classifier for the classification problem based on the feature we select. 
 The classifier takes feature matrix as input and outputs the categorical label vector (other classifiers as well).
-We implent the classifier with sklearn package. 
-We use cross validation to get accuracy of the classifier. 
-We calculate precision, recall and F-measure score with the official evaluation function. 
-We also compute confusion matrix with sklearn. 
+We implent the classifier with sklearn package. (other classifiers as well).
+We use cross validation to get accuracy of the classifier. (other classifiers as well).
+We calculate precision, recall and F-measure score with the official evaluation function. (other classifiers as well).
+We also compute confusion matrix with sklearn. (other classifiers as well).
 '''
-
-def print_cm(cm, labels, hide_zeroes=False, hide_diagonal=False, hide_threshold=None):
-    """pretty print for confusion matrixes"""
-    columnwidth = max([len(x) for x in labels] + [5])  # 5 is value length
-    empty_cell = " " * columnwidth
-    # Print header
-    print("    " + empty_cell, end=" ")
-    for label in labels:
-        print("%{0}s".format(columnwidth) % label, end=" ")
-    print()
-    # Print rows
-    for i, label1 in enumerate(labels):
-        print("    %{0}s".format(columnwidth) % label1, end=" ")
-        for j in range(len(labels)):
-            cell = "%{0}.1f".format(columnwidth) % cm[i, j]
-            if hide_zeroes:
-                cell = cell if float(cm[i, j]) != 0 else empty_cell
-            if hide_diagonal:
-                cell = cell if i != j else empty_cell
-            if hide_threshold:
-                cell = cell if cm[i, j] > hide_threshold else empty_cell
-            print(cell, end=" ")
-        print()
-
-def SVMClf(X, y, output):
+def SVMClf(X, y, output,class_num):
 	sample_size = len(X)
 	train_size = int(0.8 * sample_size)
 	feature_num = len(X[0])
@@ -57,8 +34,11 @@ def SVMClf(X, y, output):
 	# Cross validation accuracy  
 	scores = cross_val_score(clf, X, y, cv=folds)
 	# Call the evaluation function
-	clf.fit(X[:train_size], y[:train_size]) 
-	p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	clf.fit(X[:train_size], y[:train_size])
+	if class_num == 2:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 4:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1,2,3])
 	output.write("Support Vector Machine Classifier:\n")
 	output.write('Mean Accuracy:\n')
 	output.write(str(numpy.mean(scores)))
@@ -71,14 +51,13 @@ def SVMClf(X, y, output):
 	output.write("\nConfusion Matrix:\n")
 	for item in confusion_matrix(y[train_size:],clf.predict(X[train_size:])).tolist():
 		output.write("%s\n" % item)
-	print_cm(confusion_matrix(y[train_size:],clf.predict(X[train_size:])),labels=['non-ironic','ironic'])
 		
 ''' Logistic Regression Classifier
 Because logistic regression has linear kernel, 
 we get the weight for all the features with a third party function show_most_informative_features.
 The magnitude of a weight implies the importance of that feature.
 '''
-def LogisticRegressionClf(X, y, output):
+def LogisticRegressionClf(X, y, output,class_num):
 	sample_size = len(X)
 	train_size = int(0.8 * sample_size)
 	feature_num = len(X[0])
@@ -88,7 +67,10 @@ def LogisticRegressionClf(X, y, output):
 	scores = cross_val_score(clf, X, y, cv=folds)
 	# Call the evaluation function
 	clf.fit(X[:train_size], y[:train_size]) 
-	p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 2:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 4:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1,2,3])
 	output.write("Logistic Regression Classifier:\n")
 	output.write('Mean Accuracy:\n')
 	output.write(str(numpy.mean(scores)))
@@ -103,9 +85,15 @@ def LogisticRegressionClf(X, y, output):
 		output.write("%s\n" % item)
 	# Call the feature importance function
 	show_most_informative_features(clf,feature_num,output)
-	
+
+
+'''
+---------- Random Forest Classifier ------------
+This function uses Random Forest classifier for the classification problem based on the feature we select. 
+The classifier takes feature matrix as input and outputs the categorical label vector 
+'''
 # Random Forest Classifier 
-def RandomForestClf(X, y, output):
+def RandomForestClf(X, y, output,class_num):
 	sample_size = len(X)
 	train_size = int(0.8 * sample_size)
 	feature_num = len(X[0])
@@ -115,7 +103,10 @@ def RandomForestClf(X, y, output):
 	scores = cross_val_score(clf, X, y, cv=folds)
 	# Call the evaluation function
 	clf.fit(X[:train_size], y[:train_size]) 
-	p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 2:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 4:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1,2,3])
 	output.write("Random Forest Classifier:\n")
 	output.write('Mean Accuracy:\n')
 	output.write(str(numpy.mean(scores)))
@@ -137,10 +128,13 @@ def RandomForestClf(X, y, output):
 	#output.write(confusion_matrix(y[train_size:],clf.predict(X[train_size:])).tolist()[1,1])
 	for item in confusion_matrix(y[train_size:],clf.predict(X[train_size:])).tolist():
 		output.write("%s\n" % item)
-	print_cm(confusion_matrix(y[train_size:],clf.predict(X[train_size:])),labels=['non-ironic','ironic'])
 	
-	
-def NBClf(X, y, output):
+'''
+---------- Naive Bayes Classifier ------------
+This function uses Naive Bayes classifier for the classification problem based on the feature we select. 
+This classifier is only used as a baseline. 
+'''
+def NBClf(X, y, output,class_num):
 	sample_size = len(X)
 	train_size = int(0.8 * sample_size)
 	feature_num = len(X[0])
@@ -150,7 +144,10 @@ def NBClf(X, y, output):
 	scores = cross_val_score(clf, X, y, cv=folds)
 	# Call the evaluation function
 	clf.fit(X[:train_size], y[:train_size]) 
-	p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 2:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 4:
+		p, r, f = precision_recall_fscore(y[train_size:], clf.predict(X[train_size:]), beta=1, labels=[0,1,2,3])
 	output.write("Naive Bayes Classifier:\n")
 	output.write('Mean Accuracy:\n')
 	output.write(str(numpy.mean(scores)))
@@ -165,8 +162,12 @@ def NBClf(X, y, output):
 		output.write("%s\n" % item)
 	print_cm(confusion_matrix(y[train_size:],clf.predict(X[train_size:])),labels=['non-ironic','ironic'])
 
-
-def VotedClf(X,y,output):
+'''
+---------- Voting Classifier ------------
+This function uses SVM, Logistic Regression and Random Forest classifiers for the classification problem based on the feature we select. 
+Because there are 3 classifiers in this voting system, it uses a 'hard voting' which means the decision is made by majority. 
+'''
+def VotedClf(X,y,output,class_num):
 	sample_size = len(X)
 	train_size = int(0.8 * sample_size)
 	feature_num = len(X[0])
@@ -180,7 +181,10 @@ def VotedClf(X,y,output):
 	scores = cross_val_score(vclf, X, y, cv=folds)
 	# Call the evaluation function
 	vclf.fit(X[:train_size], y[:train_size])
-	p, r, f = precision_recall_fscore(y[train_size:], vclf.predict(X[train_size:]), beta=1, labels=[0, 1], pos_label=1)
+	if class_num == 2:
+		p, r, f = precision_recall_fscore(y[train_size:], vclf.predict(X[train_size:]), beta=1, labels=[0,1], pos_label=1)
+	if class_num == 4:
+		p, r, f = precision_recall_fscore(y[train_size:], vclf.predict(X[train_size:]), beta=1, labels=[0,1,2,3])
 	output.write("Voted Classifier:\n")
 	output.write('Mean Accuracy:\n')
 	output.write(str(numpy.mean(scores)))
@@ -194,14 +198,13 @@ def VotedClf(X,y,output):
 	for item in confusion_matrix(y[train_size:], vclf.predict(X[train_size:])).tolist():
 		output.write("%s\n" % item)
 
-
-def bowpca(X):
-	pca = PCA(n_components=30)
-	pca.fit(X)
-	return X
-
-
-def featurepca(X):
-	pca = PCA(n_components=10)
+'''
+---------- Principle Component Analysis ------------
+This function is a pca module for dimension reduction.
+We used dimension reduction for bag of words feature and for final feature list.
+We implent the function with sklearn package.
+'''
+def pcafunction(X,dim):
+	pca = PCA(n_components=dim)
 	pca.fit(X)
 	return X
