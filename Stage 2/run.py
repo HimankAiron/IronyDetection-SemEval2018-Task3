@@ -4,7 +4,8 @@
 # AUTHOR: Zhenduo Wang
 # The main function calls all the feature measuring function to get the measurements
 #		and then concatenate the measurements into feature matrix. Then it calls
-#		the classifiers function to get the prediction label.
+#       the pca function to do a dimensional redunction. Then it calls the 
+#       classifiers function to get the prediction label.
 
 import numpy
 
@@ -100,23 +101,22 @@ print("Computing URLs...")
 url_list = url_count(tweet_list)
 
 print("Computing bag of words features...")
+# Choose the top words by frequence as bag of words features
 vectorizer = CountVectorizer(stop_words='english',max_features=600)
 bagofwordsfeature = vectorizer.fit_transform(tweet_list)
-bagofwordsfeature = bagofwordsfeature.toarray()
-bagofwordsfeature = bowpca(bagofwordsfeature)
+bagofwordsfeature = pcafunction(bagofwordsfeature.toarray(),30)
 
 print("Concatenating features...")
 # Concatenate all the features together
 feature_table = numpy.column_stack(
     [polarity_and_subjectivity, sent_sim_list, pol_list, disc_list, celeb_list, ne_list, inten_list, adj_adv_list, punc_list, wc_list, laugh_list, prep_list, stopword_list, swear_list, url_list,bagofwordsfeature])
 
-
-feature_table = featurepca(feature_table)
+# Use pca function to decrease the feature dimension
+feature_table = pcafunction(feature_table,10)
 # Using classifiers and generate output
 print("Training Classifiers...")
 X = numpy.array(feature_table)
 y = numpy.array(cleaned_score_list)
-
 
 output = open("output_Lovelace.txt", 'w')
 
