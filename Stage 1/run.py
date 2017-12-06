@@ -98,6 +98,9 @@ swear_list = swear_scorer(cleanedtweets)
 print("Computing URLs...")
 url_list = url_count(tweet_list)
 
+print("Computing Interjections")
+interjection_list = interjection_score(tweet_list)
+
 print("Computing bag of words features...")
 vectorizer = CountVectorizer(stop_words='english',max_features=600)
 bagofwordsfeature = vectorizer.fit_transform(tweet_list)
@@ -107,7 +110,7 @@ bagofwordsfeature = bowpca(bagofwordsfeature)
 print("Concatenating features...")
 # Concatenate all the features together
 feature_table = numpy.column_stack(
-    [polarity_and_subjectivity, sent_sim_list, pol_list, disc_list, celeb_list, ne_list, inten_list, adj_adv_list, punc_list, wc_list, laugh_list, prep_list, stopword_list, swear_list, url_list,bagofwordsfeature])
+    [polarity_and_subjectivity, sent_sim_list, pol_list, disc_list, celeb_list, ne_list, inten_list, adj_adv_list, punc_list, wc_list, laugh_list, prep_list, stopword_list, swear_list, url_list, interjection_list, bagofwordsfeature])
 
 # Using classifiers and generate output
 print("Training Classifiers...")
