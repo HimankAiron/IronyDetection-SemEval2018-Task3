@@ -82,7 +82,7 @@ Analysis
 #############################################################################################
 
 We made a feature-classifier based tweet many detection prototype for the first stage. 
-In the feature selection part. We have 4 features now (sentiment polarity, subjectivity, 
+In the feature selection part. We have 18 features now (sentiment polarity, subjectivity, 
 semantic similarity and discourse marker indicator). These features are measured separately 
 and concatenated as one vector to be the input of classifiers. The classifiers takes the 
 feature vector as input and output a binary categorical label for each tweet. Now the irony 
