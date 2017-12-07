@@ -1,8 +1,16 @@
 #!/bin/sh
 
-sudo apt-get install pip3
+sudo apt-get install python3-pip
 
 pip3 install nltk
+
+python -m nltk.downloader punkt
+
+python -m nltk.downloader averaged_perceptron_tagger
+
+python -m nltk.downloader maxent_ne_chunker
+
+python -m nltk.downloader words
 
 pip3 install numpy
 
