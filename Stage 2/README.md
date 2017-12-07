@@ -12,7 +12,7 @@ Project Contributions
 
 **Madiha Mirza**: Wrote the code `preprocessing.py`, `intensifiers.py`, `interjection.py`, `celeb.py`, `political.py`.  Created the documentation in `README`, `ORIGINS`.
 
-**Zhenduo Wang**: Wrote the code `affectiveFeatures.py`, `classifiers.py`, `run.py`, and `RESULTS-1`. 
+**Zhenduo Wang**: Wrote the code `affectiveFeatures.py`, `classifiers.py`, `run.py`, `RESULTS-1`, `RESULTS-2`.
 
 
 Project Description
