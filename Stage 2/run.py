@@ -22,7 +22,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 # the number of class in classification
 # 2 for taskA, 4 for taskB
-class_num = 4
+class_num = 2
 
 # ----------MAIN RUN FUNCTION--------#
 if class_num == 2:
@@ -124,18 +124,16 @@ feature_table = numpy.column_stack(
     [polarity_and_subjectivity, sent_sim_list, pol_list, disc_list, celeb_list, ne_list, inten_list, adj_adv_list, punc_list, wc_list, laugh_list, prep_list, stopword_list, swear_list, url_list,bagofwordsfeature])
 
 # Use pca function to decrease the feature dimension
-feature_table = pcafunction(feature_table,10)
+# feature_table = pcafunction(feature_table,10)
 # Using classifiers and generate output
 print("Training Classifiers...")
 X = numpy.array(feature_table)
 y = numpy.array(cleaned_score_list)
-
 output = open("output_Lovelace.txt", 'w')
 
 LogisticRegressionClf(X, y, output,class_num)
 SVMClf(X, y, output,class_num)
 RandomForestClf(X, y, output,class_num)
 VotedClf(X,y,output,class_num)
-
 
 output.close()
