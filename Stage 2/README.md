@@ -66,6 +66,10 @@ Part Three: Creating Feature Sets
 
 * **Affective Features** reflect the emotions expressed in the text. These include sadness, happiness, anger, fear, love, joy, and surprise, etc. The file `affectiveFeatures.py` contains the code to measure the affective score of the emoticons and other emotional words. This, along with sentiment polarity, is the primary focus of Farias et al's paper and they achieved strong results when applying these features.
 
+* **Top Hashtags and Keywords** Twitter hashtags and keywords are a good measure of public opinion on treanding topics and current events. These words are used thousands of times daily and connect users around the global to discuss their interests. Through these hashtags, users express a wide variety of opinions ranging from sarcasm, irony, anger, joy, hope, among many others. The file `celebrity_list.txt` contains popular hashtags about entertainment, media, music, reality tv, sports, and fashion. Some examples of hashtags in that list are #justinbieberswag, #kkwfragrance, #IceBucketChallenge, #SFGiants. The file`celeb.py` takes the keywords and use it to score irony in tweets. The file `political_list.txt` contains hashtags related to elections, government, political leaders, countries and cities, climate change, human rights, economy, among many others. Some examples of hashtags in that list are #GOPDebate, #PrayforJapan, #Trump2020, #hillsquad, #alllivesmatter, #WomensRightsAreHumanRights. The file `political.py` takes these hashtags and use it to score irony in tweets. 
+
+* **Intensifiers** Tw
+
 * **Sentiment Polarity and Subjectivity** Subjectivity in a sentence expresses some personal feelings, views, or beliefs while polarity is a measure of whether the subjective text express a positive or negative opinion of the subject matter. The file `affectiveFeatures.py` inlcudes the code for measuring sentiment polarity and subjectivity of a tweet. As previously mentioned, Farias et al applied this feature with strong success in their paper.
 
 
