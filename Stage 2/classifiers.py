@@ -201,7 +201,7 @@ def VotedClf(X,y,output,class_num):
 '''
 ---------- Principle Component Analysis ------------
 This function is a pca module for dimension reduction.
-We used dimension reduction for bag of words feature and for final feature list.
+We used dimension reduction for bag of words feature and for final feature list.(Not included in final version system)
 We implent the function with sklearn package.
 '''
 def pcafunction(X,dim):
