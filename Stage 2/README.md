@@ -19,9 +19,9 @@ Project Description
 ==================
 SemEval-2018 Task 3 has two different subtasks for the automatic detection of irony on Twitter. Lovelace is participating in both subtasks, The first subtask (Task A) is a binary classification task in which our system predicts whether a tweet is 0 (non-ironic) or 1 (ironic). Task B is a multi-class classification task where our system has to predict if a tweet is: 1 (ironic by clash), 2 (situational irony), 3 (other irony), 0 (non-ironic).
 
-We first researched about feature selection for irony in tweets. We read several papers (cited in `References`) about irony detection and summarized the features that were proved to be important. Based on our research, we explored two types of features, namely structual (syntactic) features and affective features. Syntactic features include sentence semantic similarity, discourse markers, named entity recognition, adjective/adverbs, and punctuation. Affective features include sentiment polarity and subjectivity. Previous work on irony detection in tweets has proved the co-relation between sentiment polarity and subjectivity with irony in tweets. Ironic tweets tend to have positive sentiment words and are more subjective. After we selected the features, we assigned scores for each features and then we got a feature matrix. 
+We first researched about feature selection for irony in tweets. We read several papers (cited in `References`) about irony detection and summarized the features that were proved to be important. Based on our research, we explored two types of features, namely structual (syntactic) features and affective features. Syntactic features include sentence semantic similarity, discourse markers, named entity recognition, adjective/adverbs, punctuation, laughter, topical content like celebrities and politics, interjections, word count, stopwords, swear words, URLs, and prepositions. Affective features include sentiment polarity and subjectivity. We also include a Bag of Words model with the 30 most common words as an additional 30 features. Previous work on irony detection in tweets has proved the co-relation between sentiment polarity and subjectivity with irony in tweets. Ironic tweets tend to have positive sentiment words and are more subjective. After we selected the features, we assigned scores for each features and then we got a feature matrix. 
 
-We have used a supervised learning approach. To establish a baseline performance, we train supervised models using seven syntactic and affective features:  (1) sentence semantic similarity, (2) discourse markers, (3) named entity recognition, (4) adjective/adverbs, (5) punctuation, (6) sentiment polarity, and (7) subjectivity.  We train a logistic regression classifier, a random forest classifier, and a support vector machine (SVM). The feature sets are measured separately and concatenated as one vector to train the classifiers. The classifiers take the feature vector as input and predict a binary label 0 (non-ironic) or 1 (ironic) for each tweet. The baseline models are tested using 10-fold cross-validation.
+We have used a supervised learning approach. To establish a baseline performance, we train supervised models using the above described features.  We train a logistic regression classifier, a random forest classifier, and a support vector machine (SVM). The feature sets are measured separately and concatenated as one vector to train the classifiers. The classifiers take the feature vector as input and make a prediction using a voting system among the classifiers. For stage one, they predict a binary label 0 (non-ironic) or 1 (ironic) for each tweet. For stage two, they predict a 0 (non-ironic), 1 (Verbal polar irony), 2 (Other verbal irony), or 3 (Situational Irony). The baseline models are tested using 10-fold cross-validation.
 
 
 Example Input and Output
@@ -41,7 +41,6 @@ Part One: Collecting the Data
 ------------------------------
 We used the training dataset `SemEval2018-T4-train-taskA.txt` provided by the task organizers. The training dataset contains 3,834 tweets, each tweet is marked as 1 for ironic and 0 for non-ironic.
 
-
 Part Two: Preprocessing the Data
 -------------------------------------------
 Unstructured data such as tweets often contain shortened words, characters within words, over-use of punctuation, emojis, and may not conform to grammatical rules. We performed preprocessing on the training dataset to remove elements that serve no syntactic function. We cleaned tweets to remove quotation marks, contractions, Twitter @usernames (@-mentions), Twitter #hashtags, URLs, digits, emoticons, transport & map symbols, pictographs, flags (iOS), and then performed case normalization and tokenization. The code for data cleaning and preprocessing is found in `preProcessing.py`.
@@ -52,15 +51,17 @@ Part-of-Speech Tagging (POS tagging): After the data was cleaned, we tagged each
 Part Three: Creating Feature Sets
 ---------------------------
 
-* **Sentence Semantic Similarity** is the measurement of how similar the meaning of two sentences is. We employed WordNet   synsets (sets of synonyms) to evaluate sentence similarity between two sentences. The similarity of the sentences is computed based on the similarity of the pairs of words. The file `sentencesimilarity.py` includes the code for measuring sentence semantic similarity. This is a structural feature employed by Farias et al with some success, motivating our usage of this feature. Ironic tweets with multiple sentences should show a sharp change in meaning between sentences, which will be detected by a low similarity score.
+* **Sentence Semantic Similarity** is the measurement of how similar the meaning of two sentences is. We employed WordNet   synsets (sets of synonyms) to evaluate sentence similarity between two sentences. The similarity of the sentences is computed based on the similarity of the pairs of words. The file `sentencesimilarity.py` includes the code for measuring sentence semantic similarity. This is a structural feature employed by Farias et al with some success, motivating our usage of this feature. Ironic tweets with multiple sentences should show a sharp change in meaning between sentences, which will be detected by a low similarity score. In stage 2, this feature has been updated to take the max similarity between sentences in a tweet and works for tweets of two sentences or more.
 
-* **Discourse Markers** are phrases that are indicative of discourse segments. Examples: Something, Moreover, In addition, Additionally, Further, Also, Besides, However, On the other hand, Yet, Because, Since, As, Therefore, Consequently, Accordingly, Hence, Thus, etc. The file `structuralfeatures.py` takes the input from `discourse_list.txt` and scores discourse markers. These have been cited as being more common in Farias et al. In Stage 2, this will likely be split into two separate feature sets, for Counterfactual Discourse Markers and Temporal Compression Discourse Markers.
+* **Discourse Markers** are phrases that are indicative of discourse segments. Examples: Something, Moreover, In addition, Additionally, Further, Also, Besides, However, On the other hand, Yet, Because, Since, As, Therefore, Consequently, Accordingly, Hence, Thus, etc. The file `structuralfeatures.py` takes the input from `discourse_list.txt` and scores discourse markers. These have been cited as being more common in Farias et al. In Stage 2, this list has been extended
 
-* **Named Entity Recognition (NER)** is used to identify the proper names of things, such as people, organizations, locations, products, etc. from unstructured text. The file `posfunctions.py` includes function that tokenizes each tweet by separating it into sentences, then chunks sentences and creates an NLTK POS tree for each sentence. Named entities were also considered by some to be more common in ironic tweets, but our stage 1 results suggest otherwise.
+* **Named Entity Recognition (NER)** is used to identify the proper names of things, such as people, organizations, locations, products, etc. from unstructured text. The file `posfunctions.py` includes function that tokenizes each tweet by separating it into sentences, then chunks sentences and creates an NLTK POS tree for each sentence. Named entities were also considered by some to be more common in ironic tweets, but our stage 1 results suggest otherwise. For stage 2, we initally tried making this more specific, identifying specific types of named entities (People, Places, Geopolitical Entities, Organizations, etc) but this reduced the accuracy of our model.
 
-* **Word Count** The file `structuralfeatures.py` contains the code for counting the words in each tweet and append it to the list of wordcounts for every tweet. Farias et al suggest that ironic tweets are likely to contain fewer words than non-ironic tweets.
+* **Word Count** The file `structuralfeatures.py` contains the code for counting the words in each tweet and append it to the list of wordcounts for every tweet. Farias et al suggest that ironic tweets are likely to contain fewer words than non-ironic tweets. For stage 2, we tried updating this to take the word count of each sentence within each tweet, but this reduced the accuracy of our model, so we kept this as a standard word count.
 
 * **Adjective and Adverb Count** Adjectives and adverbs occur more frequently in ironic tweets than in non-ironic. The file `posfunctions.py` contains functions that require Part of Speech tagging, including adjective and adverb counting. Farias et al cite a 2007 paper from Kreuz and Caucci which suggests that adverbs and adjectives are used as lexical markers in expressions of irony, motivating the use of this feature.
+
+* **Prepositions** It was hypothesized by our team that prepositions would occur more often in situational irony, since it is necessary to describe the situation, which often involves a preposition. For example, "I was on the bus," or "I was at school." Many irony detection functions also tag the parts of speech of all words, so this seemed like a logical step.
 
 * **Punctuation** Ironic tweets tend to have excessive punctuation to catch the eyes of readers and to stress a point. Examples include "It is really worth it!!!" or "Okay...". Thus, heavy punctuation sometimes implies irony. This is discussed in detail, again, in Farias et al. they note that punctation has been used to detect irony in a number of experiments. Stage 2 will expand this to also identify all caps letters. The file `structuralfeatures.py` contains the code to check each important punctuation in a tweet and then append this to the count of punctuation in all tweets.
 
@@ -74,6 +75,13 @@ Part Three: Creating Feature Sets
 
 * **Sentiment Polarity and Subjectivity** Subjectivity in a sentence expresses some personal feelings, views, or beliefs while polarity is a measure of whether the subjective text express a positive or negative opinion of the subject matter. The file `affectiveFeatures.py` inlcudes the code for measuring sentiment polarity and subjectivity of a tweet. As previously mentioned, Farias et al applied this feature with strong success in their paper.
 
+* **Laughter** It was noted by Buschmeier et al that laughter is a common trait of ironic tweets, which makes sense since often irony is used to make a joke. Often, laughter is symbolized by terms like "LOL" or "Haha" or "LMAO," so terms like this were searched for.
+
+* **Stopwords** Stopwords are words that search engines and NLP programs often ignore because they do not contain significant information often. However, they are very common in conversational English, which is a common feature of irony and so we thought this may be a significant feature - it did offer some improvement for our system
+
+* **Swear Words** There is no academic basis behind this feature, but since ironic tweets are typically emotional in nature it was hypothesized that ironic tweets might include these "emotional words." The function works by checking if swear words are contained in each tweet. This did prove to have some benefit for our system.
+
+* **URLs** This was based on the work found in "Detecting Sarcasm in Multimodal Social Platforms" by Schifanella et al, which found that ironic tweets often contain images and often the interpretation of the irony depends on the image. For example, a photo of a warm, sunny beach with the caption "Terrible weather we're having." However, our data does not immediately give us images. We did see when assessing the data though that any time there was an image, it was included in the link using a URL, and a majority of the URLs in the data were images, so the simplest way to identify this was to just check if a tweet had a URL.
 
 Part Four: Building, Training, and Testing the Classifiers
 -----------------------------------------------------
@@ -227,6 +235,14 @@ References
       Joshi, Aditya, Vaibhav Tripathi, Kevin Patel, Pushpak Bhattacharyya, and Mark Carman.
       Conference on Empirical Methods in Natural Language Processing (EMNLP), November 2016.
       DOI: https://arxiv.org/pdf/1610.00883.pdf.
+      
+   *  **Detecting Sarcasm in Multimodal Social Platforms** 
+      Rossano Schifanella, Paloma de Juan, Joel Tetreault, and LiangLiang Cao. 2016. In Proceedings of the 2016 ACM on
+      Multimedia Conference (MM '16). ACM, New York, NY, USA, 1136-1145. DOI: https://doi.org/10.1145/2964284.2964321
+      
+   *  **An Impact Analysis of Features in a Classification Approach to Irony Detection in Product Reviews** 
+      Konstantin Buschmeier, Philipp Cimiano and Roman Klinger. 2014. In Proceedings of the 5th Workshop on Computational 
+      Approaches to Subjectivity, Sentiment and Social Media Analysis. ACL, Baltimore, MD, USA, 42-49. 
   
   
 
