@@ -162,7 +162,7 @@ Results
 ==================
 `evaluate.py` is the official evaluation script that takes as input a submission dir containing the system output and calculates accuracy, precision, recall and F1-score.
 
-We evaluated our classifiers using standard evaluation metrics, including accuracy, precision, recall and F1-score. The classifiers produce quite a good result with these features. We plan to keep incorporating more feature measurements to imporve the performance of the baseline models. A detailed description and analysis of results is found in `RESULTS-1`.
+We evaluated our classifiers using standard evaluation metrics, including accuracy, precision, recall and F1-score. The classifiers produce quite a good result with these features. We incorporated more feature measurements to imporve the performance of the baseline models. A detailed description and analysis of results is found in `RESULTS-1` and `RESULTS-2`.
 
 
 Dependencies
@@ -230,6 +230,3 @@ References
   
   
 
-
-
-    
