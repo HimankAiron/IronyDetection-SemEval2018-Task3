@@ -10,14 +10,14 @@ Project Contributions
 
 **Kevin Swanberg**: Wrote the code `sentencesimilarity.py`, `structuralfeatures.py`, `posfunctions.py`, and `__init__.py`. 
 
-**Madiha Mirza**: Wrote the code `preprocessing.py`. Created the documentation in `README`, `ORIGINS`.
+**Madiha Mirza**: Wrote the code `preprocessing.py`, `intensifiers.py`, `interjection.py`, `celeb.py`, `political.py`.  Created the documentation in `README`, `ORIGINS`.
 
 **Zhenduo Wang**: Wrote the code `affectiveFeatures.py`, `classifiers.py`, `run.py`, and `RESULTS-1`. 
 
 
 Project Description
 ==================
-SemEval-2018 Task 3 has two different subtasks for the automatic detection of irony on Twitter. For Stage 1, we are participating in the first subtask (Task A) which is a binary classification task in which our system predicts whether a tweet is 0 (non-ironic) or 1 (ironic). 
+SemEval-2018 Task 3 has two different subtasks for the automatic detection of irony on Twitter. Lovelace is participating in both subtasks, The first subtask (Task A) is a binary classification task in which our system predicts whether a tweet is 0 (non-ironic) or 1 (ironic). Task B is a multi-class classification task where our system has to predict if a tweet is: 1 (ironic by clash), 2 (situational irony), 3 (other irony), 0 (non-ironic).
 
 We first researched about feature selection for irony in tweets. We read several papers (cited in `References`) about irony detection and summarized the features that were proved to be important. Based on our research, we explored two types of features, namely structual (syntactic) features and affective features. Syntactic features include sentence semantic similarity, discourse markers, named entity recognition, adjective/adverbs, and punctuation. Affective features include sentiment polarity and subjectivity. Previous work on irony detection in tweets has proved the co-relation between sentiment polarity and subjectivity with irony in tweets. Ironic tweets tend to have positive sentiment words and are more subjective. After we selected the features, we assigned scores for each features and then we got a feature matrix. 
 
@@ -69,6 +69,8 @@ Part Three: Creating Feature Sets
 * **Top Hashtags and Keywords** Twitter hashtags and keywords are a good measure of public opinion on treanding topics and current events. These words are used thousands of times daily and connect users around the global to discuss their interests. Through these hashtags, users express a wide variety of opinions ranging from sarcasm, irony, anger, joy, hope, among many others. The file `celebrity_list.txt` contains popular hashtags about entertainment, media, music, reality tv, sports, and fashion. Some examples of hashtags in that list are #justinbieberswag, #kkwfragrance, #IceBucketChallenge, #SFGiants. The file`celeb.py` takes the keywords and use it to score irony in tweets. The file `political_list.txt` contains hashtags related to elections, government, political leaders, countries and cities, climate change, human rights, economy. Some examples of hashtags in that list are #GOPDebate, #PrayforJapan, #Trump2020, #hillsquad, #alllivesmatter, #WomensRightsAreHumanRights. The file `political.py` takes these hashtags and use it to score irony in tweets. 
 
 * **Intensifiers** Many users employ certain adverbs and adjectives to add more strength and emphasis to their opinion. Such words are called intensifers and they boost the ironic effect of the tweet. Some examples of intensifers are words such as absolutely, apparently, awful, hella, heck, for sure, wickedly. The file `intensifiers_list.txt` contains a list of such words. The file `intensifiers.py` uses these words to measure whether a tweet is ironic or not.
+
+* **Interjections** Interjections are word that express feeling rather than meaning. These words aren't grammatically related to the rest of the sentence and are abruptly added to convey a sudden emotion or reaction. Interjections are more common in informal language and since tweets use informal language, interjections are a good measure of detecting whether a user modeled the tweet in an ironic way. Some examples of intensifers are words such as wow, gosh, jeez, damn, blah, aww, boo, hmm, yay, yikes. The file `interjection_list.txt` contains a list of such words and the file `interjection.py` uses these words to measure the irony expressed in tweets.
 
 * **Sentiment Polarity and Subjectivity** Subjectivity in a sentence expresses some personal feelings, views, or beliefs while polarity is a measure of whether the subjective text express a positive or negative opinion of the subject matter. The file `affectiveFeatures.py` inlcudes the code for measuring sentiment polarity and subjectivity of a tweet. As previously mentioned, Farias et al applied this feature with strong success in their paper.
 
@@ -196,7 +198,7 @@ References
 
 1. SemEval-2018: http://alt.qcri.org/semeval2018/
 
-2. We consulted the following research papers for Stage 1.
+2. We consulted the following research papers for Stage 1 and Stage 2.
 
   * **Clues for Detecting Irony in User-Generated Contents: Oh...!! It’s “so easy" ;-)**  
       Paula Carvalho, Luís Sarmento, Mário J. Silva, and Eugénio de Oliveira. 2009. 
@@ -215,5 +217,19 @@ References
       Emotional Categories) based on a wide range of lexical resources available for English. It applies supervised machine  
       learning approach to detect irony in tweets and shows that affective information is effective in distinguishing among 
       ironic and nonironic tweets.*
+      
+   *  **Automatic Sarcasm Detection: A Survey.**  
+      Joshi, Aditya, Pushpak Bhattacharyya, and Mark J. Carman. 2017. 
+      ACM Comput. Surv, vol. 0, no. 0.
+      DOI: https://arxiv.org/abs/1602.03426.
+  
+   *  **Are Word Embedding Based Features Useful for Sarcasm Detection?**  
+      Joshi, Aditya, Vaibhav Tripathi, Kevin Patel, Pushpak Bhattacharyya, and Mark Carman.
+      Conference on Empirical Methods in Natural Language Processing (EMNLP), November 2016.
+      DOI: https://arxiv.org/pdf/1610.00883.pdf.
+  
+  
+
+
 
     
