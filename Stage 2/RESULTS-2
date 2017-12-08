@@ -175,9 +175,13 @@ that our system does not achive to much in subtask B as required by the competit
 In subtask B, we need to label a tweet with 0(non-ironic) or 1,2,3 (three different subcategories 
 of irony). However, the difference among these subcategories are so subtle that our features does 
 not capture them very well. And overall these classifiers have a hard time on multiclass classification. 
-From the confusion matrix, we can see that the class 2 and 3 are relatively rare. This makes the 
-task very hard for classifiers because of lack of information for class 2 and 3. But because the 
-majority class of the tweets are class 0 and class 1. We are still able to get a high accuracy.
+We review our system and the output of our system and find several possible reasons:
+1. From the confusion matrix, we can see that the class 2(7%) and 3(5.9%) are relatively rare. This makes the 
+task very hard for classifiers because of lack of information for class 2 and 3. 
+2. We choose tweet from class 1, 2 and 3(different ironies) and find that their feature lists are more 
+similar to each other than to class 0(non-ironic). This means we miss features that are revealing for
+identifying different kinds of irony.
+But because the majority class of the tweets are class 0 and class 1. We are still able to get a high accuracy(0.6+).
 
 Another phenomenon in subtask B is that the precision, recall, f-measure scores are very low, 
 compared with accuracy. This is because according to the definition of p, r, f, they are most 
