@@ -201,6 +201,11 @@ Running
 Execute `runit.sh` to run the program and see the results.
 
 
+Acknowledgements
+==================
+We sincerely thank our professor Dr. Ted Pedersen for encouraging us to participate in this task as part of our graduate coursework in Natural Language Processing. We are grateful for his guidance and support.
+
+
 References
 ==================
 
