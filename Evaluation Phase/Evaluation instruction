@@ -1,0 +1,3 @@
+To do evaluation on test data, please download the two files in this directory and overwrite the original files in "Stage 2".
+
+Run "run.py" and get four output files which contain predictions of SVM, LR, RF and voting classifiers, respectively.
